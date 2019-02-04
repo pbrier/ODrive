@@ -81,8 +81,8 @@ public:
     // variables exposed on protocol
     float pos_setpoint_ = 0.0f;
     float vel_setpoint_ = 0.0f;
-    float pos_err = 0.0f;
-    float vel_err = 0.0f;
+    float pos_err_ = 0.0f;
+    float vel_err_ = 0.0f;
     
     // float vel_setpoint = 800.0f; <sensorless example>
     float vel_integrator_current_ = 0.0f;  // [A]
@@ -98,8 +98,8 @@ public:
             make_protocol_property("error", &error_),
             make_protocol_property("pos_setpoint", &pos_setpoint_),
             make_protocol_property("vel_setpoint", &vel_setpoint_),
-            make_protocol_property("pos_error", &pos_err),
-            make_protocol_property("vel_error", &vel_err),
+            make_protocol_ro_property("pos_err_or", &pos_err_),
+            make_protocol_ro_property("vel_err_or", &vel_err_),
             make_protocol_property("vel_integrator_current", &vel_integrator_current_),
             make_protocol_property("current_setpoint", &current_setpoint_),
             make_protocol_property("vel_ramp_target", &vel_ramp_target_),

@@ -74,8 +74,8 @@ void Controller::start_anticogging_calibration() {
  */
 bool Controller::anticogging_calibration(float pos_estimate, float vel_estimate) {
     if (anticogging_.calib_anticogging && anticogging_.cogging_map != NULL) {
-        float pos_err = anticogging_.index - pos_estimate;
-        if (fabsf(pos_err) <= anticogging_.calib_pos_threshold &&
+        float pos_err_ = anticogging_.index - pos_estimate;
+        if (fabsf(pos_err_) <= anticogging_.calib_pos_threshold &&
             fabsf(vel_estimate) < anticogging_.calib_vel_threshold) {
             anticogging_.cogging_map[anticogging_.index++] = vel_integrator_current_;
         }
@@ -143,12 +143,12 @@ bool Controller::update(float pos_estimate, float vel_estimate, float* current_s
             // Keep pos setpoint from drifting
             pos_setpoint_ = fmodf_pos(pos_setpoint_, cpr);
             // Circular delta
-            pos_err = pos_setpoint_ - axis_->encoder_.pos_cpr_;
-            pos_err = wrap_pm(pos_err, 0.5f * cpr);
+            pos_err_ = pos_setpoint_ - axis_->encoder_.pos_cpr_;
+            pos_err_ = wrap_pm(pos_err_, 0.5f * cpr);
         } else {
-            pos_err = pos_setpoint_ - pos_estimate;
+            pos_err_ = pos_setpoint_ - pos_estimate;
         }
-        vel_des += config_.pos_gain * pos_err;
+        vel_des += config_.pos_gain * pos_err_;
     }
 
     // Velocity limiting
@@ -174,9 +174,9 @@ bool Controller::update(float pos_estimate, float vel_estimate, float* current_s
         Iq += anticogging_.cogging_map[mod(static_cast<int>(anticogging_pos), axis_->encoder_.config_.cpr)];
     }
 
-   vel_err = vel_des - vel_estimate;
+   vel_err_ = vel_des - vel_estimate;
     if (config_.control_mode >= CTRL_MODE_VELOCITY_CONTROL) {
-        Iq += config_.vel_gain *vel_err;
+        Iq += config_.vel_gain *vel_err_;
     }
 
     // Velocity integral action before limiting
@@ -203,7 +203,7 @@ bool Controller::update(float pos_estimate, float vel_estimate, float* current_s
             // TODO make decayfactor configurable
             vel_integrator_current_ *= 0.99f;
         } else {
-            vel_integrator_current_ += (config_.vel_integrator_gain * current_meas_period) * vel_err;
+            vel_integrator_current_ += (config_.vel_integrator_gain * current_meas_period) * vel_err_;
         }
     }
 
