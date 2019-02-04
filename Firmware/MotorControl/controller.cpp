@@ -135,7 +135,7 @@ bool Controller::update(float pos_estimate, float vel_estimate, float* current_s
     // TODO Decide if we want to use encoder or pll position here
     float vel_des = vel_setpoint_;
     if (config_.control_mode >= CTRL_MODE_POSITION_CONTROL) {
-        float pos_err;
+        
         if (config_.setpoints_in_cpr) {
             // TODO this breaks the semantics that estimates come in on the arguments.
             // It's probably better to call a get_estimate that will arbitrate (enc vs sensorless) instead.
@@ -174,9 +174,9 @@ bool Controller::update(float pos_estimate, float vel_estimate, float* current_s
         Iq += anticogging_.cogging_map[mod(static_cast<int>(anticogging_pos), axis_->encoder_.config_.cpr)];
     }
 
-    float v_err = vel_des - vel_estimate;
+   vel_err = vel_des - vel_estimate;
     if (config_.control_mode >= CTRL_MODE_VELOCITY_CONTROL) {
-        Iq += config_.vel_gain * v_err;
+        Iq += config_.vel_gain *vel_err;
     }
 
     // Velocity integral action before limiting
@@ -203,7 +203,7 @@ bool Controller::update(float pos_estimate, float vel_estimate, float* current_s
             // TODO make decayfactor configurable
             vel_integrator_current_ *= 0.99f;
         } else {
-            vel_integrator_current_ += (config_.vel_integrator_gain * current_meas_period) * v_err;
+            vel_integrator_current_ += (config_.vel_integrator_gain * current_meas_period) * vel_err;
         }
     }
 
